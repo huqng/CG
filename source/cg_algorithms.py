@@ -24,7 +24,13 @@ def draw_line(p_list, algorithm):
                 x0, y0, x1, y1 = x1, y1, x0, y0
             k = (y1 - y0) / (x1 - x0)
             for x in range(x0, x1 + 1):
-                result.append((x, int(y0 + k * (x - x0))))
+                px = x
+                py = int(y0 + k * (x - x0))
+                result.append((px, py))
+                result.append((px + 1, py))
+                result.append((px - 1, py))
+                result.append((px, py + 1))
+                result.append((px, py - 1))
     elif algorithm == 'DDA':
         pass
     elif algorithm == 'Bresenham':
