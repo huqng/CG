@@ -39,9 +39,10 @@ if __name__ == '__main__':
                         pixels = alg.draw_polygon(p_list, algorithm)
                         for x, y in pixels:
                             canvas[height - 1 - y, x] = color
-                        pass
                     elif item_type == 'ellipse':
-                        pass
+                        pixels = alg.draw_ellipse(p_list)
+                        for x, y in pixels:
+                            canvas[height - 1 - y, x] = color
                     elif item_type == 'curve':
                         pass
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
@@ -75,7 +76,7 @@ if __name__ == '__main__':
                 x1 = int(line[4])
                 y1 = int(line[5])
                 algorithm = ""  #???
-                item_dict[item_id] = ['Ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
+                item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawCurve':
                 pass
             elif line[0] == 'translate':

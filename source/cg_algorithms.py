@@ -58,7 +58,20 @@ def draw_ellipse(p_list):
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 椭圆的矩形包围框左上角和右下角顶点坐标
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    pass
+    print("Drawing Ellipse")
+    result = []
+    x0, y0 = p_list[0]
+    x1, y1 = p_list[1]
+    if x0 > x1:
+        x0, y0, x1, y1 = x1, y1, x0, y0
+    x2 = round((x0 + x1) / 2)
+    y2 = round((y0 + y1) / 2)
+    for x in range(x0, x1 + 1):
+        y = int(math.sqrt((x1 - x0) * (x1 - x0) / 4 - (x - x2) * (x - x2)))
+        y = int(y * abs((y1 - y0) / (x1 - x0)))
+        result.append((x, y2 + y))
+        result.append((x, y2 - y))
+    return result
 
 
 def draw_curve(p_list, algorithm):
