@@ -27,10 +27,18 @@ def draw_line(p_list, algorithm):
                 px = x
                 py = int(y0 + k * (x - x0))
                 result.append((px, py))
-                result.append((px + 1, py))
-                result.append((px - 1, py))
-                result.append((px, py + 1))
-                result.append((px, py - 1))
+        if abs(k) > 1:
+            if y0 == y1:
+                 for x in range(x0, x1 + 1):
+                    result.append((x, y0))
+            else:
+                if y0 > y1:
+                    x0, y0, x1, y1 = x1, y1, x0, y0
+                k = (x1 - x0) / (y1 - y0)
+                for y in range(y0, y1 + 1):
+                    py = y
+                    px = int(x0 + k * (y - y0))
+                    result.append((px, py))
     elif algorithm == 'DDA':
         pass
     elif algorithm == 'Bresenham':
@@ -62,15 +70,25 @@ def draw_ellipse(p_list):
     result = []
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    if x0 > x1:
-        x0, y0, x1, y1 = x1, y1, x0, y0
+    k = abs((y1 - y0) / (x1 - x0))
     x2 = round((x0 + x1) / 2)
     y2 = round((y0 + y1) / 2)
-    for x in range(x0, x1 + 1):
-        y = int(math.sqrt((x1 - x0) * (x1 - x0) / 4 - (x - x2) * (x - x2)))
-        y = int(y * abs((y1 - y0) / (x1 - x0)))
-        result.append((x, y2 + y))
-        result.append((x, y2 - y))
+    r = x2 - x0
+    if x0 > x1:
+        x0, y0, x1, y1 = x1, y1, x0, y0
+    for x in range(-r, r + 1):
+        y = math.sqrt(r * r - x * x)
+        y = y * k
+        result.append((int(x + x2), int(y2 + y)))
+        result.append((int(x + x2), int(y2 - y)))
+    
+    if y0 > y1:
+        x0, y0, x1, y1 = x1, y1, x0, y0
+    for y in range(- r, r + 1):
+        x = math.sqrt(r * r - y * y)
+        result.append((int(x2 + x), int(y2 + y * k)))
+        result.append((int(x2 - x), int(y2 + y * k)))
+
     return result
 
 
