@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 # -*- coding:utf-8 -*-
 
 import sys
@@ -54,7 +54,33 @@ if __name__ == '__main__':
                 y1 = int(line[5])
                 algorithm = line[6]
                 item_dict[item_id] = ['line', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
-            ...
-
+            elif line[0] == 'drawPolygon':
+                item_id = line[1]
+                i = 2
+                xy_list = []
+                while(line[i].isdigit()):
+                    if i % 2 == 0:
+                        xy_list.append([line[i]], line[i + 1])
+                    i = i + i
+                algorithm = line[i]
+                item_dict[item_id] = ['polygon', xy_list, algorithm. np.array(pen_color)]
+            elif line[0] == 'drawEllipse':
+                item_id = line[1]
+                x0 = int(line[2])
+                y0 = int(line[3])
+                x1 = int(line[4])
+                y1 = int(line[5])
+                algorithm = ""  #???
+                item_dict[item_id] = ['Ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
+            elif line[0] == 'drawCurve':
+                pass
+            elif line[0] == 'translate':
+                pass
+            elif line[0] == 'rotate':
+                pass
+            elif line[0] == 'scale':
+                pass
+            elif line[0] == 'clip':
+                pass
             line = fp.readline()
 
