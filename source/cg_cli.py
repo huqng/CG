@@ -80,7 +80,13 @@ if __name__ == '__main__':
             elif line[0] == 'drawCurve':
                 pass
             elif line[0] == 'translate':
-                pass
+                id = line[1]
+                dx = int(line[2])
+                dy = int(line[3])
+                for p in item_dict[id][1]:
+                    print(p)
+                    p[0] += dx
+                    p[1] += dy
             elif line[0] == 'rotate':
                 pass
             elif line[0] == 'scale':
