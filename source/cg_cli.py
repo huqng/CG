@@ -84,13 +84,18 @@ if __name__ == '__main__':
                 dx = int(line[2])
                 dy = int(line[3])
                 for p in item_dict[id][1]:
-                    print(p)
                     p[0] += dx
                     p[1] += dy
             elif line[0] == 'rotate':
                 pass
             elif line[0] == 'scale':
-                pass
+                id = line[1]
+                x = int(line[2])
+                y = int(line[3])
+                s = float(line[4])
+                for p in item_dict[id][1]:
+                    p[0] = int((p[0] - x) * s + x)
+                    p[1] = int((p[1] - y) * s + y) 
             elif line[0] == 'clip':
                 pass
             line = fp.readline()
