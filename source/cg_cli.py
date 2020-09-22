@@ -87,7 +87,17 @@ if __name__ == '__main__':
                     p[0] += dx
                     p[1] += dy
             elif line[0] == 'rotate':
-                pass
+                id = line[1]
+                x = int(line[2])
+                y = int(line[3])
+                rd = int(line[4])
+                r = np.radians(rd)
+                m = [[np.cos(r), -np.sin(r)], [np.sin(r), np.cos(r)]]
+                for p in item_dict[id][1]:
+                    p[:] = [p[0] - x, p[1] - y]
+                    p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
+                    p[:] = [int(p[0] + x), int(p[1] + y)]
+                print(item_dict[id])
             elif line[0] == 'scale':
                 id = line[1]
                 x = int(line[2])
