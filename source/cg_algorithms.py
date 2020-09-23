@@ -14,32 +14,28 @@ def draw_line(p_list, algorithm):               ##
     """
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    result = []
+    result = [[x0, y0]]
     if algorithm == 'Naive':
         if x0 == x1:
             for y in range(y0, y1 + 1):
                 result.append((x0, y))
-        else:
-            if x0 > x1:
-                x0, y0, x1, y1 = x1, y1, x0, y0
-            k = (y1 - y0) / (x1 - x0)
-            for x in range(x0, x1 + 1):
-                px = x
-                py = round(y0 + k * (x - x0))
-                result.append((px, py))
+            return result
+        if x0 > x1:
+            x0, y0, x1, y1 = x1, y1, x0, y0
+        k = (y1 - y0) / (x1 - x0)
+        for x in range(x0, x1 + 1):
+            px = x
+            py = round(y0 + k * (x - x0))
+            result.append((px, py))
         
         if abs(k) > 1:
-            if y0 == y1:
-                 for x in range(x0, x1 + 1):
-                    result.append((x, y0))
-            else:
-                if y0 > y1:
-                    x0, y0, x1, y1 = x1, y1, x0, y0
-                k = (x1 - x0) / (y1 - y0)
-                for y in range(y0, y1 + 1):
-                    py = y
-                    px = round(x0 + k * (y - y0))
-                    result.append((px, py))
+            if y0 > y1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
+            k = (x1 - x0) / (y1 - y0)
+            for y in range(y0, y1 + 1):
+                py = y
+                px = round(x0 + k * (y - y0))
+                result.append((px, py))
         
     elif algorithm == 'DDA':
         pass
@@ -56,7 +52,7 @@ def draw_polygon(p_list, algorithm):            ##
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
     result = []
-    for i in range(len(p_list)):
+    for i in range(1, len(p_list)):
         line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
     return result
