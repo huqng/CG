@@ -54,15 +54,13 @@ class MyCanvas(QGraphicsView):
         self.status = 'ellipse'
         self.temp_id = item_id
 
-    def start_translate(self, item_id):
+    def start_translate(self):
         self.status = 'translate'
-        self.temp_id = item_id
         pass
 
     def finish_draw(self):
-        print(self.temp_id + "FINISHED, 新的id是", end = '')
+        print(self.temp_id + " FINISHED")
         self.temp_id = self.main_window.get_id()
-        print(self.temp_id + "cnt比id大1")
         self.updateScene([self.sceneRect()])
 
     def clear_selection(self):
@@ -89,17 +87,18 @@ class MyCanvas(QGraphicsView):
             self.temp_item = MyItem(self.temp_id, self.status, [[x, y], [x, y]], self.temp_algorithm)
             self.scene().addItem(self.temp_item)
         elif self.status == 'polygon_0':
-            self.temp_item = MyItem(self.temp_id, "polygon", [[x, y], [x, y]], self.temp_algorithm)
+            self.temp_item = MyItem(self.temp_id, "polygon", [[x, y]], self.temp_algorithm)
             self.scene().addItem(self.temp_item)
             self.status = 'polygon_1'
         elif self.status == 'polygon_1':
             self.temp_item.p_list.append([x, y])
+            pass
         elif self.status == 'ellipse':
             self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.temp_algorithm)
             self.scene().addItem(self.temp_item)
         elif self.status == 'translate':
-            temp_item = self.item_dict[self.temp_id]
-            if temp_item.boundingRect().contains(x, y):
+            self.temp_item = self.item_dict[self.selected_id]
+            if self.temp_item.boundingRect().contains(x, y):
                 self.status = 'translate_1'
                 self.x0 = x
                 self.y0 = y
@@ -121,9 +120,10 @@ class MyCanvas(QGraphicsView):
         elif self.status == 'ellipse':
             self.temp_item.p_list[1] = [x, y]
         elif self.status == 'translate_1':
-            for p in self.temp_item.p_list:
-                p[0] += (x - self.x0)
-                p[1] += (y - self.y0)
+            alg.translate(self.temp_item.p_list, x - self.x0, y - self.y0)
+        #    for p in self.temp_item.p_list:
+        #        p[0] += (x - self.x0)
+        #        p[1] += (y - self.y0)
             self.x0 = x
             self.y0 = y
 
@@ -141,8 +141,7 @@ class MyCanvas(QGraphicsView):
         elif self.status == 'polygon_1':
             num = len(self.temp_item.p_list)
             if (num > 2) and math.hypot(self.temp_item.p_list[0][0] - self.temp_item.p_list[num - 1][0], self.temp_item.p_list[0][1] - self.temp_item.p_list[num - 1][1]) < 10:
-
-                self.temp_item.p_list[num - 1] = self.temp_item.p_list[0]
+                self.temp_item.p_list[num - 1][:] = self.temp_item.p_list[0][:]
                 self.item_dict[self.temp_id] = self.temp_item
                 self.list_widget.addItem(self.temp_id)
                 self.status = 'polygon_0'
@@ -156,6 +155,7 @@ class MyCanvas(QGraphicsView):
         elif self.status == 'translate_1':
             self.status = 'translate'
 
+        self.updateScene([self.sceneRect()])
         super().mouseReleaseEvent(event)
 
 
@@ -352,7 +352,7 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage("选择需要变换的Item！")
         else:
             self.statusBar().showMessage("使用鼠标拖动")
-            self.canvas_widget.start_translate(self.canvas_widget.selected_id)
+            self.canvas_widget.start_translate()
         pass
     def rotate_action(self):
         pass    
