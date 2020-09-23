@@ -61,6 +61,8 @@ class MyCanvas(QGraphicsView):
     def start_rotate(self):
         self.status = 'rotate'
         pass
+    def start_scale(self):
+        self.status = 'scale'
     def finish_draw(self):
         print(self.temp_id + " FINISHED")
         self.temp_id = self.main_window.get_id()
@@ -165,12 +167,26 @@ class MyCanvas(QGraphicsView):
         pos = self.mapToScene(event.position().toPoint())
         x = int(pos.x())
         y = int(pos.y())
-        d = event.angleDelta().y() / 12
+        
         if QApplication.keyboardModifiers() == Qt.ControlModifier:
-            d = event.angleDelta().y() / 120
-        print("r", end = '')
+            ctrl = 1
+        else:
+            ctrl = 0
+        d = event.angleDelta().y() / 12 / (1 + 9 * ctrl)
+
         if self.status == 'rotate':
             alg.rotate(self.item_dict[self.selected_id].p_list, x, y, d)
+        elif self.status == 'scale':
+            if d > 0 and ctrl == 0:
+                alg.scale(self.item_dict[self.selected_id].p_list, x, y, 1.1)
+            elif d > 0:
+                alg.scale(self.item_dict[self.selected_id].p_list, x, y, 1.01)
+            elif d < 0 and ctrl == 0:
+                alg.scale(self.item_dict[self.selected_id].p_list, x, y, 0.9)
+            else:
+                alg.scale(self.item_dict[self.selected_id].p_list, x, y, 0.99)
+
+
 
         self.updateScene([self.sceneRect()])
         super().wheelEvent(event)
@@ -218,7 +234,6 @@ class MyItem(QGraphicsItem):
             for p in item_pixels:
                 painter.drawPoint(*p)
             if self.selected:
-                print(item_pixels)
                 painter.setPen(QColor(255, 0, 0))
                 painter.drawRect(self.boundingRect())
             pass
@@ -378,9 +393,12 @@ class MainWindow(QMainWindow):
         else:
             self.statusBar().showMessage("使用鼠标滚轮和Ctrl")
             self.canvas_widget.start_rotate()
-        pass    
     def scale_action(self):
-        pass
+        if self.canvas_widget.selected_id == '':
+            self.statusBar().showMessage("选择需要scale的Item！")
+        else:
+            self.statusBar().showMessage("使用鼠标滚轮和Ctrl")
+            self.canvas_widget.start_scale()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
