@@ -26,7 +26,7 @@ if __name__ == '__main__':
                 width = int(line[1])
                 height = int(line[2])
                 item_dict = {}
-            elif line[0] == 'saveCanvas':
+            elif line[0] == 'saveCanvas':   #
                 save_name = line[1]
                 canvas = np.zeros([height, width, 3], np.uint8)
                 canvas.fill(255)
@@ -46,11 +46,11 @@ if __name__ == '__main__':
                     elif item_type == 'curve':
                         pass
                 Image.fromarray(canvas).save(os.path.join(output_dir, save_name + '.bmp'), 'bmp')
-            elif line[0] == 'setColor':
+            elif line[0] == 'setColor':     #
                 pen_color[0] = int(line[1])
                 pen_color[1] = int(line[2])
                 pen_color[2] = int(line[3])
-            elif line[0] == 'drawLine':
+            elif line[0] == 'drawLine':     #
                 item_id = line[1]
                 x0 = int(line[2])
                 y0 = int(line[3])
@@ -58,7 +58,7 @@ if __name__ == '__main__':
                 y1 = int(line[5])
                 algorithm = line[6]
                 item_dict[item_id] = ['line', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
-            elif line[0] == 'drawPolygon':
+            elif line[0] == 'drawPolygon':  #
                 item_id = line[1]
                 line = line[2:]
                 i = 0
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                     i = i + 1
                 algorithm = line[i]
                 item_dict[item_id] = ['polygon', xy_list, algorithm, np.array(pen_color)]
-            elif line[0] == 'drawEllipse':
+            elif line[0] == 'drawEllipse':  #
                 item_id = line[1]
                 x0 = int(line[2])
                 y0 = int(line[3])
@@ -77,36 +77,26 @@ if __name__ == '__main__':
                 y1 = int(line[5])
                 algorithm = ""  #???
                 item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
-            elif line[0] == 'drawCurve':
+            elif line[0] == 'drawCurve':    ##
                 pass
-            elif line[0] == 'translate':
+            elif line[0] == 'translate':    # 
                 id = line[1]
                 dx = int(line[2])
                 dy = int(line[3])
-                for p in item_dict[id][1]:
-                    p[0] += dx
-                    p[1] += dy
-            elif line[0] == 'rotate':
+                alg.translate(item_dict[id][1])
+            elif line[0] == 'rotate':       # 
                 id = line[1]
                 x = int(line[2])
                 y = int(line[3])
-                rd = int(line[4])
-                r = np.radians(rd)
-                m = [[np.cos(r), -np.sin(r)], [np.sin(r), np.cos(r)]]
-                for p in item_dict[id][1]:
-                    p[:] = [p[0] - x, p[1] - y]
-                    p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
-                    p[:] = [int(p[0] + x), int(p[1] + y)]
-                print(item_dict[id])
-            elif line[0] == 'scale':
+                r = int(line[4])
+                alg.rotate(item_dict[id][1], x, y, r)
+            elif line[0] == 'scale':        #
                 id = line[1]
                 x = int(line[2])
                 y = int(line[3])
                 s = float(line[4])
-                for p in item_dict[id][1]:
-                    p[0] = int((p[0] - x) * s + x)
-                    p[1] = int((p[1] - y) * s + y) 
-            elif line[0] == 'clip':
+                alg.scale(item_dict[id][1], x, y, s)
+            elif line[0] == 'clip':         ##
                 pass
             line = fp.readline()
 

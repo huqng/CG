@@ -5,7 +5,7 @@
 import math
 
 
-def draw_line(p_list, algorithm):
+def draw_line(p_list, algorithm):               ##
     """绘制线段
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
@@ -25,8 +25,9 @@ def draw_line(p_list, algorithm):
             k = (y1 - y0) / (x1 - x0)
             for x in range(x0, x1 + 1):
                 px = x
-                py = int(y0 + k * (x - x0))
+                py = round(y0 + k * (x - x0))
                 result.append((px, py))
+        
         if abs(k) > 1:
             if y0 == y1:
                  for x in range(x0, x1 + 1):
@@ -37,8 +38,9 @@ def draw_line(p_list, algorithm):
                 k = (x1 - x0) / (y1 - y0)
                 for y in range(y0, y1 + 1):
                     py = y
-                    px = int(x0 + k * (y - y0))
+                    px = round(x0 + k * (y - y0))
                     result.append((px, py))
+        
     elif algorithm == 'DDA':
         pass
     elif algorithm == 'Bresenham':
@@ -46,7 +48,7 @@ def draw_line(p_list, algorithm):
     return result
 
 
-def draw_polygon(p_list, algorithm):
+def draw_polygon(p_list, algorithm):            ##
     """绘制多边形
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 多边形的顶点坐标列表
@@ -60,7 +62,7 @@ def draw_polygon(p_list, algorithm):
     return result
 
 
-def draw_ellipse(p_list):
+def draw_ellipse(p_list):                       #
     """绘制椭圆（采用中点圆生成算法）
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 椭圆的矩形包围框左上角和右下角顶点坐标
@@ -78,20 +80,20 @@ def draw_ellipse(p_list):
     for x in range(-r, r + 1):
         y = math.sqrt(r * r - x * x)
         y = y * k
-        result.append((int(x + x2), int(y2 + y)))
-        result.append((int(x + x2), int(y2 - y)))
+        result.append((round(x + x2), round(y2 + y)))
+        result.append((round(x + x2), round(y2 - y)))
     
     if y0 > y1:
         x0, y0, x1, y1 = x1, y1, x0, y0
     for y in range(- r, r + 1):
         x = math.sqrt(r * r - y * y)
-        result.append((int(x2 + x), int(y2 + y * k)))
-        result.append((int(x2 - x), int(y2 + y * k)))
-
+        result.append((round(x2 + x), round(y2 + y * k)))
+        result.append((round(x2 - x), round(y2 + y * k)))
+    
     return result
 
 
-def draw_curve(p_list, algorithm):
+def draw_curve(p_list, algorithm):              ##
     """绘制曲线
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 曲线的控制点坐标列表
@@ -101,7 +103,7 @@ def draw_curve(p_list, algorithm):
     pass
 
 
-def translate(p_list, dx, dy):
+def translate(p_list, dx, dy):                  ###
     """平移变换
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -109,10 +111,13 @@ def translate(p_list, dx, dy):
     :param dy: (int) 垂直方向平移量
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
+    for p in p_list:
+        p[0] += dx
+        p[1] += dy
     pass
 
 
-def rotate(p_list, x, y, r):
+def rotate(p_list, x, y, r):                    ###
     """旋转变换（除椭圆外）
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -121,10 +126,17 @@ def rotate(p_list, x, y, r):
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
+
+    r = math.radians(r)
+    m = [[math.cos(r), -math.sin(r)], [math.sin(r), math.cos(r)]]
+    for p in p_list:
+        p[:] = [p[0] - x, p[1] - y]
+        p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
+        p[:] = [int(p[0] + x), int(p[1] + y)]
     pass
 
 
-def scale(p_list, x, y, s):
+def scale(p_list, x, y, s):                     ###
     """缩放变换
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -133,10 +145,13 @@ def scale(p_list, x, y, s):
     :param s: (float) 缩放倍数
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
+    for p in p_list:
+        p[0] = int((p[0] - x) * s + x)
+        p[1] = int((p[1] - y) * s + y) 
     pass
 
-
-def clip(p_list, x_min, y_min, x_max, y_max, algorithm):
+                                                
+def clip(p_list, x_min, y_min, x_max, y_max, algorithm):    ##
     """线段裁剪
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
