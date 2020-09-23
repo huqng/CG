@@ -4,6 +4,11 @@
 # 本文件只允许依赖math库
 import math
 
+def Round(f):
+    if f - int(f) >= 0.5:
+        return int(f) + 1
+    else:
+        return int(f)
 
 def draw_line(p_list, algorithm):               ##
     """绘制线段
@@ -14,28 +19,28 @@ def draw_line(p_list, algorithm):               ##
     """
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    result = [[x0, y0]]
+    result = [[Round(x0), Round(y0)]]
     if algorithm == 'Naive':
         if x0 == x1:
-            for y in range(y0, y1 + 1):
-                result.append((x0, y))
+            for y in range(int(y0), int(y1 + 1)):
+                result.append((Round(x0), Round(y)))
             return result
         if x0 > x1:
             x0, y0, x1, y1 = x1, y1, x0, y0
         k = (y1 - y0) / (x1 - x0)
-        for x in range(x0, x1 + 1):
+        for x in range(int(x0), int(x1 + 1)):
             px = x
-            py = round(y0 + k * (x - x0))
-            result.append((px, py))
+            py = y0 + k * (x - x0)
+            result.append((Round(px), Round(py)))
         
         if abs(k) > 1:
             if y0 > y1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
             k = (x1 - x0) / (y1 - y0)
-            for y in range(y0, y1 + 1):
+            for y in range(int(y0), int(y1 + 1)):
                 py = y
-                px = round(x0 + k * (y - y0))
-                result.append((px, py))
+                px = x0 + k * (y - y0)
+                result.append((Round(px), Round(py)))
         
     elif algorithm == 'DDA':
         pass
@@ -71,25 +76,27 @@ def draw_ellipse(p_list):                       #
         return draw_line(p_list, 'Naive')
     if y0 == y1:
         return draw_line(p_list, 'Naive')
-    x2 = round((x0 + x1) / 2)
-    y2 = round((y0 + y1) / 2)
+    x2 = (x0 + x1) / 2
+    y2 = (y0 + y1) / 2
     k = abs((y1 - y0) / (x1 - x0))
     r = abs(x2 - x0)
     if x0 > x1:
         x0, y0, x1, y1 = x1, y1, x0, y0
-    for x in range(-r, r + 1):
+    for x in range(int(-r), int(r + 1)):
         y = math.sqrt(r * r - x * x)
         y = y * k
-        result.append((round(x + x2), round(y2 + y)))
-        result.append((round(x + x2), round(y2 - y)))
+        result.append((Round(x + x2), Round(y2 + y)))
+        result.append((Round(x + x2), Round(y2 - y)))
     
+    k = abs((x1 - x0) / (y1 - y0))
+    r = abs(y2 - y0)
     if y0 > y1:
         x0, y0, x1, y1 = x1, y1, x0, y0
-    for y in range(int(- r * k), int(r * k + 1)):
-        x = math.sqrt(r * r - y * y / k / k)
-        result.append((round(x2 + x), round(y2 + y)))
-        result.append((round(x2 - x), round(y2 + y)))
-    
+    for y in range(int(- r), int(r + 1)):
+        x = math.sqrt(r * r - y * y)
+        x = x * k
+        result.append((Round(x2 + x), Round(y2 + y)))
+        result.append((Round(x2 - x), Round(y2 + y)))
     return result
 
 
@@ -126,13 +133,13 @@ def rotate(p_list, x, y, r):                    ###
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-
+    print(x,y,r)
     r = math.radians(r)
     m = [[math.cos(r), -math.sin(r)], [math.sin(r), math.cos(r)]]
     for p in p_list:
         p[:] = [p[0] - x, p[1] - y]
         p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
-        p[:] = [int(p[0] + x), int(p[1] + y)]
+        p[:] = [p[0] + x, p[1] + y]
     pass
 
 
@@ -146,8 +153,8 @@ def scale(p_list, x, y, s):                     ###
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
     for p in p_list:
-        p[0] = int((p[0] - x) * s + x)
-        p[1] = int((p[1] - y) * s + y) 
+        p[0] = (p[0] - x) * s + x
+        p[1] = (p[1] - y) * s + y
     pass
 
                                                 

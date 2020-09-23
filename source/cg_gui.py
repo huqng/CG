@@ -17,7 +17,8 @@ from PyQt5.QtWidgets import (
     QWidget,
     QStyleOptionGraphicsItem)
 from PyQt5.QtGui import QPainter, QMouseEvent, QColor
-from PyQt5.QtCore import QRectF
+from PyQt5.QtGui import QWheelEvent, QKeyEvent
+from PyQt5.QtCore import QRectF, Qt
 
 
 class MyCanvas(QGraphicsView):
@@ -57,7 +58,9 @@ class MyCanvas(QGraphicsView):
     def start_translate(self):
         self.status = 'translate'
         pass
-
+    def start_rotate(self):
+        self.status = 'rotate'
+        pass
     def finish_draw(self):
         print(self.temp_id + " FINISHED")
         self.temp_id = self.main_window.get_id()
@@ -157,6 +160,20 @@ class MyCanvas(QGraphicsView):
 
         self.updateScene([self.sceneRect()])
         super().mouseReleaseEvent(event)
+    
+    def wheelEvent(self, event: QWheelEvent) -> None:
+        pos = self.mapToScene(event.position().toPoint())
+        x = int(pos.x())
+        y = int(pos.y())
+        d = event.angleDelta().y() / 12
+        if QApplication.keyboardModifiers() == Qt.ControlModifier:
+            d = event.angleDelta().y() / 120
+        print("r", end = '')
+        if self.status == 'rotate':
+            alg.rotate(self.item_dict[self.selected_id].p_list, x, y, d)
+
+        self.updateScene([self.sceneRect()])
+        super().wheelEvent(event)
 
 
 class MyItem(QGraphicsItem):
@@ -201,6 +218,7 @@ class MyItem(QGraphicsItem):
             for p in item_pixels:
                 painter.drawPoint(*p)
             if self.selected:
+                print(item_pixels)
                 painter.setPen(QColor(255, 0, 0))
                 painter.drawRect(self.boundingRect())
             pass
@@ -256,13 +274,13 @@ class MainWindow(QMainWindow):
 
         # 使用QListWidget来记录已有的图元，并用于选择图元。注：这是图元选择的简单实现方法，更好的实现是在画布中直接用鼠标选择图元
         self.list_widget = QListWidget(self)
-        self.list_widget.setMinimumWidth(200)
+        self.list_widget.setMaximumWidth(200)
 
         # 使用QGraphicsView作为画布
         self.scene = QGraphicsScene(self)
         self.scene.setSceneRect(0, 0, 600, 600)
         self.canvas_widget = MyCanvas(self.scene, self)
-        self.canvas_widget.setFixedSize(600, 600)
+    #    self.canvas_widget.setFixedSize(600, 600)
         self.canvas_widget.main_window = self
         self.canvas_widget.list_widget = self.list_widget
 
@@ -312,7 +330,7 @@ class MainWindow(QMainWindow):
         self.central_widget.setLayout(self.hbox_layout)
         self.setCentralWidget(self.central_widget)
         self.statusBar().showMessage('空闲')
-        self.resize(600, 600)
+        self.resize(1280, 720)
         self.setWindowTitle('CG Demo')
 
     def get_id(self):
@@ -355,6 +373,11 @@ class MainWindow(QMainWindow):
             self.canvas_widget.start_translate()
         pass
     def rotate_action(self):
+        if self.canvas_widget.selected_id == '':
+            self.statusBar().showMessage("选择需要旋转的Item！")
+        else:
+            self.statusBar().showMessage("使用鼠标滚轮和Ctrl")
+            self.canvas_widget.start_rotate()
         pass    
     def scale_action(self):
         pass
