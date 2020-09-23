@@ -67,10 +67,14 @@ def draw_ellipse(p_list):                       #
     result = []
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    k = abs((y1 - y0) / (x1 - x0))
+    if x0 == x1:
+        return draw_line(p_list, 'Naive')
+    if y0 == y1:
+        return draw_line(p_list, 'Naive')
     x2 = round((x0 + x1) / 2)
     y2 = round((y0 + y1) / 2)
-    r = x2 - x0
+    k = abs((y1 - y0) / (x1 - x0))
+    r = abs(x2 - x0)
     if x0 > x1:
         x0, y0, x1, y1 = x1, y1, x0, y0
     for x in range(-r, r + 1):
@@ -81,10 +85,10 @@ def draw_ellipse(p_list):                       #
     
     if y0 > y1:
         x0, y0, x1, y1 = x1, y1, x0, y0
-    for y in range(- r, r + 1):
-        x = math.sqrt(r * r - y * y)
-        result.append((round(x2 + x), round(y2 + y * k)))
-        result.append((round(x2 - x), round(y2 + y * k)))
+    for y in range(int(- r * k), int(r * k + 1)):
+        x = math.sqrt(r * r - y * y / k / k)
+        result.append((round(x2 + x), round(y2 + y)))
+        result.append((round(x2 - x), round(y2 + y)))
     
     return result
 
