@@ -54,6 +54,11 @@ class MyCanvas(QGraphicsView):
         self.status = 'ellipse'
         self.temp_id = item_id
 
+    def start_translate(self, item_id):
+        self.status = 'translate'
+        self.temp_id = item_id
+        pass
+
     def finish_draw(self):
         print(self.temp_id + "FINISHED, 新的id是", end = '')
         self.temp_id = self.main_window.get_id()
@@ -92,6 +97,15 @@ class MyCanvas(QGraphicsView):
         elif self.status == 'ellipse':
             self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.temp_algorithm)
             self.scene().addItem(self.temp_item)
+        elif self.status == 'translate':
+            temp_item = self.item_dict[self.temp_id]
+            if temp_item.boundingRect().contains(x, y):
+                self.status = 'translate_1'
+                self.x0 = x
+                self.y0 = y
+            else:
+                pass
+
         self.updateScene([self.sceneRect()])
         super().mousePressEvent(event)
 
@@ -106,6 +120,12 @@ class MyCanvas(QGraphicsView):
             self.temp_item.p_list[num - 1] = [x, y]
         elif self.status == 'ellipse':
             self.temp_item.p_list[1] = [x, y]
+        elif self.status == 'translate_1':
+            for p in self.temp_item.p_list:
+                p[0] += (x - self.x0)
+                p[1] += (y - self.y0)
+            self.x0 = x
+            self.y0 = y
 
         self.updateScene([self.sceneRect()])
         super().mouseMoveEvent(event)
@@ -133,6 +153,8 @@ class MyCanvas(QGraphicsView):
             self.item_dict[self.temp_id] = self.temp_item
             self.list_widget.addItem(self.temp_id)
             self.finish_draw()
+        elif self.status == 'translate_1':
+            self.status = 'translate'
 
         super().mouseReleaseEvent(event)
 
@@ -175,7 +197,6 @@ class MyItem(QGraphicsItem):
                 painter.drawRect(self.boundingRect())
             pass
         elif self.item_type == 'ellipse':
-            print("HERE")
             item_pixels = alg.draw_ellipse(self.p_list)
             for p in item_pixels:
                 painter.drawPoint(*p)
@@ -273,12 +294,15 @@ class MainWindow(QMainWindow):
         clip_liang_barsky_act = clip_menu.addAction('Liang-Barsky')
 
         # 连接信号和槽函数
-        exit_act.triggered.connect(qApp.quit)
-        line_naive_act.triggered.connect(self.line_naive_action)
-        polygon_naive_act.triggered.connect(self.polygon_naive_action)
-        ellipse_act.triggered.connect(self.ellipse_action)
-        self.list_widget.currentTextChanged.connect(
-            self.canvas_widget.selection_changed)
+        exit_act.triggered.connect(qApp.quit)                                   # EXIT - QUIT
+        line_naive_act.triggered.connect(self.line_naive_action)                # Line - Naive
+        polygon_naive_act.triggered.connect(self.polygon_naive_action)          # Polygon - Naive
+        ellipse_act.triggered.connect(self.ellipse_action)                      # Ellipse
+        translate_act.triggered.connect(self.translate_action)                  # Translate
+        rotate_act.triggered.connect(self.rotate_action)                        # Rotate
+        scale_act.triggered.connect(self.scale_action)                          # Scale
+        self.list_widget.currentTextChanged.connect(self.canvas_widget.selection_changed)
+                                                                                # Selection changed
 
         # 设置主窗口的布局
         self.hbox_layout = QHBoxLayout()
@@ -323,6 +347,17 @@ class MainWindow(QMainWindow):
         self.list_widget.clearSelection()
         self.canvas_widget.clear_selection()
 
+    def translate_action(self):
+        if self.canvas_widget.selected_id == '':
+            self.statusBar().showMessage("选择需要变换的Item！")
+        else:
+            self.statusBar().showMessage("使用鼠标拖动")
+            self.canvas_widget.start_translate(self.canvas_widget.selected_id)
+        pass
+    def rotate_action(self):
+        pass    
+    def scale_action(self):
+        pass
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
