@@ -333,10 +333,10 @@ class MainWindow(QMainWindow):
         reset_canvas_act.triggered.connect(self.reset_canvas_action)
         line_naive_act.triggered.connect(self.line_naive_action)                # Line - Naive
         line_dda_act.triggered.connect(self.line_dda_action)                    # Line - DDA
-        line_bresenham_act.triggered.connect(self.line_dda_action)              # Line - B
+        line_bresenham_act.triggered.connect(self.line_bresenham_action)        # Line - B
         polygon_naive_act.triggered.connect(self.polygon_naive_action)          # Polygon - Naive
         polygon_dda_act.triggered.connect(self.polygon_dda_action)              # Line - DDA
-        polygon_bresenham_act.triggered.connect(self.polygon_dda_action)        # Line - B
+        polygon_bresenham_act.triggered.connect(self.polygon_bresenham_action)  # Line - B
         ellipse_act.triggered.connect(self.ellipse_action)                      # Ellipse
         translate_act.triggered.connect(self.translate_action)                  # Translate
         rotate_act.triggered.connect(self.rotate_action)                        # Rotate
@@ -385,6 +385,13 @@ class MainWindow(QMainWindow):
         self.canvas_widget.clear_selection()
 
     def line_bresenham_action(self):
+        if self.item_cnt != 0:
+            self.item_cnt -= 1  # 为了补偿draw finish中的增量
+        id = self.get_id()
+        self.canvas_widget.start_draw_line('Bresenham', id)
+        self.statusBar().showMessage('Bresenham算法绘制线段')
+        self.list_widget.clearSelection()
+        self.canvas_widget.clear_selection()
         pass
 
     def polygon_naive_action(self):           
@@ -407,6 +414,13 @@ class MainWindow(QMainWindow):
         pass
 
     def polygon_bresenham_action(self):
+        if self.item_cnt != 0:
+            self.item_cnt -= 1  # 为了补偿draw finish中的增量
+        id = self.get_id()
+        self.canvas_widget.start_draw_polygon('Bresenham', id)
+        self.statusBar().showMessage('Bresenham算法绘制Polygon')
+        self.list_widget.clearSelection()
+        self.canvas_widget.clear_selection()
         pass
 
     def ellipse_action(self):

@@ -69,6 +69,47 @@ def draw_line(p_list, algorithm):               ##
         return result
         pass
     elif algorithm == 'Bresenham':
+        print(p_list)
+        swap_x = False
+        swap_y = False
+        swap_xy = False
+        if x0 == x1 or y0 == y1:
+            return draw_line(p_list, 'Naive')
+        if abs(y0 - y1) > abs(x0 - x1):
+            x0, y0, x1, y1 = y0, x0, y1, x1
+            swap_xy = True
+        if y0 > y1:
+            y0, y1 = y1, y0
+            swap_y = True
+        if x0 > x1:
+            x0, x1 = x1, x0
+            swap_x = True
+
+        result = []
+        dx = Round(x1 - x0)
+        dy = Round(y1 - y0)
+        d = dy - (dx - dy)
+        x = Round(x0)
+        y = Round(y0)
+        while x <= x1:
+            if d < 0:
+                d += 2 * dy
+            else:
+                y = y + 1
+                d += (dy - dx) * 2
+            result_x = x
+            result_y = y
+            if swap_x:
+                result_x = (x0 + x1) - result_x
+            if swap_y:
+                result_y = (y0 + y1) - result_y
+            if swap_xy:
+                result_x, result_y = result_y, result_x
+            result.append((result_x, result_y))
+            x = x + 1
+        return result
+
+        
         pass
     return result
 
