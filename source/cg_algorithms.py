@@ -62,6 +62,8 @@ def draw_polygon(p_list, algorithm):            ##
     for i in range(1, len(p_list)):
         line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
+    if len(p_list) > 2:
+        result += draw_line([p_list[-1], p_list[0]], algorithm)
     return result
 
 
