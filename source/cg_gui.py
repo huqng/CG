@@ -328,12 +328,16 @@ class MainWindow(QMainWindow):
 
         # 连接信号和槽函数
         exit_act.triggered.connect(qApp.quit)                                   # EXIT - QUIT
+        reset_canvas_act.triggered.connect(self.reset_canvas_action)
         line_naive_act.triggered.connect(self.line_naive_action)                # Line - Naive
         polygon_naive_act.triggered.connect(self.polygon_naive_action)          # Polygon - Naive
         ellipse_act.triggered.connect(self.ellipse_action)                      # Ellipse
         translate_act.triggered.connect(self.translate_action)                  # Translate
         rotate_act.triggered.connect(self.rotate_action)                        # Rotate
         scale_act.triggered.connect(self.scale_action)                          # Scale
+        curve_bezier_act.triggered.connect(self.curve_bezier_action)               # Bezier - Curve
+        curve_b_spline_act.triggered.connect(self.curve_b_spline_action)           # B-spline - Curve
+
         self.list_widget.currentTextChanged.connect(self.canvas_widget.selection_changed)
                                                                                 # Selection changed
 
@@ -402,6 +406,24 @@ class MainWindow(QMainWindow):
         else:
             self.statusBar().showMessage("使用鼠标滚轮和Ctrl")
             self.canvas_widget.start_scale()
+
+    def curve_bezier_action(self):
+        pass
+
+    def curve_b_spline_action(self):
+        pass
+
+    def reset_canvas_action(self):
+        self.item_cnt = 0
+        self.list_widget.clear()
+        self.statusBar().showMessage("")
+        self.canvas_widget.scene().clear()
+        self.canvas_widget.item_dict.clear()
+        self.canvas_widget.temp_algorithm = ''
+        self.canvas_widget.temp_id = ''
+        self.canvas_widget.temp_item = None
+        self.canvas_widget.status = ''
+        
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
