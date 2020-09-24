@@ -295,7 +295,7 @@ class MainWindow(QMainWindow):
         self.scene = QGraphicsScene(self)
         self.scene.setSceneRect(0, 0, 600, 600)
         self.canvas_widget = MyCanvas(self.scene, self)
-    #    self.canvas_widget.setFixedSize(600, 600)
+        self.canvas_widget.setFixedSize(600, 600)
         self.canvas_widget.main_window = self
         self.canvas_widget.list_widget = self.list_widget
 
@@ -344,6 +344,7 @@ class MainWindow(QMainWindow):
         # 设置主窗口的布局
         self.hbox_layout = QHBoxLayout()
         self.hbox_layout.addWidget(self.canvas_widget)
+        self.hbox_layout.addStretch()
         self.hbox_layout.addWidget(self.list_widget, stretch=1)
         self.central_widget = QWidget()
         self.central_widget.setLayout(self.hbox_layout)

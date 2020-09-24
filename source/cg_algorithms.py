@@ -26,7 +26,7 @@ def draw_line(p_list, algorithm):               ##
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
     if algorithm == 'Naive':
-        x0, y0 = p_list[0]          # Float in p_list
+        x0, y0 = p_list[0]                          # Float in p_list
         x1, y1 = p_list[1]
         result = [(Round(x0), Round(y0)), (Round(x1), Round(y1))]
         if x1 == x0 and y1 == y0:
@@ -65,8 +65,8 @@ def draw_polygon(p_list, algorithm):            ##
     for i in range(1, len(p_list)):
         line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
-#    if len(p_list) > 2:
-#        result += draw_line([p_list[-1], p_list[0]], algorithm)
+    #if len(p_list) > 2:
+    #result += draw_line([p_list[-1], p_list[0]], algorithm)
     return result
 
 
@@ -79,27 +79,49 @@ def draw_ellipse(p_list):                       #
     result = []
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
-    if x0 == x1:
+    if x0 == x1 or y0 == y1:
         return draw_line(p_list, 'Naive')
-    if y0 == y1:
-        return draw_line(p_list, 'Naive')
+    a = abs(x1 - x0) / 2
+    b = abs(y1 - y0) / 2
+    x2 = abs(x1 + x0) / 2
+    y2 = abs(y1 + y0) / 2
+    x = 0
+    y = b
+    while x <= a and abs(b * b * x) <= abs(a * a * y) + 1:
+        result.append((Round(x2 + x), Round(y2 + y)))
+        result.append((Round(x2 + x), Round(y2 - y)))
+        result.append((Round(x2 - x), Round(y2 + y)))
+        result.append((Round(x2 - x), Round(y2 - y)))
+        x = x + 1
+        y = math.sqrt(abs(b * b * (1 - x * x / a / a)))
+    x = a
+    y = 0
+    while y <= b and abs(b * b * x) >= abs(a * a * y) - 1:
+        result.append((Round(x2 + x), Round(y2 + y)))
+        result.append((Round(x2 + x), Round(y2 - y)))
+        result.append((Round(x2 - x), Round(y2 + y)))
+        result.append((Round(x2 - x), Round(y2 - y)))
+        y = y + 1
+        x = math.sqrt(abs(a * a * (1 - y * y / b / b)))
+ 
+    return result
     x2 = (x0 + x1) / 2
     y2 = (y0 + y1) / 2
     k = abs((y1 - y0) / (x1 - x0))
-    r = abs(x2 - x0)
+    r = abs(int(x2 - x0))
     if x0 > x1:
         x0, y0, x1, y1 = x1, y1, x0, y0
-    for x in range(int(-r), int(r + 1)):
+    for x in range(-r, r + 1):
         y = math.sqrt(r * r - x * x)
         y = y * k
         result.append((Round(x + x2), Round(y2 + y)))
         result.append((Round(x + x2), Round(y2 - y)))
     
     k = abs((x1 - x0) / (y1 - y0))
-    r = abs(y2 - y0)
+    r = abs(int(y2 - y0))
     if y0 > y1:
         x0, y0, x1, y1 = x1, y1, x0, y0
-    for y in range(int(- r), int(r + 1)):
+    for y in range(-r, r + 1):
         x = math.sqrt(r * r - y * y)
         x = x * k
         result.append((Round(x2 + x), Round(y2 + y)))
@@ -159,7 +181,7 @@ def rotate(p_list, x, y, r):                    #
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-    print("Rotate at", x, y, "| degree =", r)
+    #print("Rotate at", x, y, "| degree =", r)
     r = math.radians(r)
     m = [[math.cos(r), -math.sin(r)], [math.sin(r), math.cos(r)]]
     for p in p_list:
