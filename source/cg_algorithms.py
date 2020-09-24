@@ -9,6 +9,17 @@ def Round(f):
         return int(f) + 1
     else:
         return int(f)
+def fraction(n):
+    if n <= 1:
+        return 1
+    else:
+        return n * fraction(n - 1)
+def Combinational(n:int, m:int):
+    ret = 1
+    for i in range(m):
+        ret *= (n - i)
+    ret /= fraction(m)
+    return ret
 
 def draw_line(p_list, algorithm):               ##
     """绘制线段
@@ -111,8 +122,27 @@ def draw_curve(p_list, algorithm):              ##
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    pass
-
+    print(p_list, end = '')
+    result = []
+    if algorithm == 'Naive':        # 
+        return draw_polygon(p_list, 'Naive')
+    if algorithm == "Bezier":
+        print("Bezier Curve")
+        N = 2000
+        for i in range(1, N):
+            t = i / N
+            x_i = 0
+            y_i = 0
+            e = len(p_list) 
+            for j in range(e):
+                x_i += p_list[j][0] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
+                y_i += p_list[j][1] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
+            result.append((Round(x_i), Round(y_i)))
+    elif algorithm == "B-spline":
+        pass
+    else:
+        pass
+    return result
 
 def translate(p_list, dx, dy):                  #
     """平移变换
