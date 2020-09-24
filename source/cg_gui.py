@@ -339,7 +339,7 @@ class MainWindow(QMainWindow):
         curve_b_spline_act.triggered.connect(self.curve_b_spline_action)           # B-spline - Curve
 
         self.list_widget.currentTextChanged.connect(self.canvas_widget.selection_changed)
-                                                                                # Selection changed
+                                                                                # Selection chang   
 
         # 设置主窗口的布局
         self.hbox_layout = QHBoxLayout()
@@ -418,11 +418,12 @@ class MainWindow(QMainWindow):
         self.list_widget.clear()
         self.statusBar().showMessage("")
         self.canvas_widget.scene().clear()
-        self.canvas_widget.item_dict.clear()
         self.canvas_widget.temp_algorithm = ''
         self.canvas_widget.temp_id = ''
         self.canvas_widget.temp_item = None
         self.canvas_widget.status = ''
+        self.canvas_widget.clear_selection()
+        self.canvas_widget.item_dict.clear()
         
 
 if __name__ == '__main__':

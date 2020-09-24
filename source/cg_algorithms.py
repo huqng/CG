@@ -5,10 +5,7 @@
 import math
 
 def Round(f):
-    if f - int(f) >= 0.5:
-        return int(f) + 1
-    else:
-        return int(f)
+    return int(f + 0.5)
 def fraction(n):
     if n <= 1:
         return 1
@@ -28,32 +25,27 @@ def draw_line(p_list, algorithm):               ##
     :param algorithm: (string) 绘制使用的算法，包括'DDA'和'Bresenham'，此处的'Naive'仅作为示例，测试时不会出现
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    x0, y0 = p_list[0]
-    x1, y1 = p_list[1]
-    result = [[Round(x0), Round(y0)]]
     if algorithm == 'Naive':
-        if x0 == x1:
+        x0, y0 = p_list[0]          # Float in p_list
+        x1, y1 = p_list[1]
+        result = [(Round(x0), Round(y0)), (Round(x1), Round(y1))]
+        if x1 == x0 and y1 == y0:
+            return result
+        if abs(x1 - x0) >= abs(y1 - y0):
+            if x0 > x1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
+            k = (y1- y0) / (x1 - x0)                # x1 - x0 won't be 0
+            for x in range(int(x0), int(x1 + 1)):
+                y = y0 + k * (x - x0)
+                result.append((Round(x), Round(y)))
+        else:
             if y0 > y1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
+            k = (x1 - x0) / (y1 - y0)
             for y in range(int(y0), int(y1 + 1)):
-                result.append((Round(x0), Round(y)))
-            return result
-        if x0 > x1:
-            x0, y0, x1, y1 = x1, y1, x0, y0
-        k = (y1 - y0) / (x1 - x0)
-        for x in range(int(x0), int(x1 + 1)):
-            px = x
-            py = y0 + k * (x - x0)
-            result.append((Round(px), Round(py)))
-        
-        if abs(k) > 1:
-            if y0 > y1:     # y0 won't = y1, otherwise k = 0
-                x0, y0, x1, y1 = x1, y1, x0, y0
-            k = (x1 - x0) / (y1 - y0)       
-            for y in range(int(y0), int(y1 + 1)):
-                py = y
-                px = x0 + k * (y - y0)
-                result.append((Round(px), Round(py)))
+                x = x0 + k * (y - y0)
+                result.append((Round(x), Round(y)))
+        return result
         
     elif algorithm == 'DDA':
         pass
@@ -73,8 +65,8 @@ def draw_polygon(p_list, algorithm):            ##
     for i in range(1, len(p_list)):
         line = draw_line([p_list[i - 1], p_list[i]], algorithm)
         result += line
-    if len(p_list) > 2:
-        result += draw_line([p_list[-1], p_list[0]], algorithm)
+#    if len(p_list) > 2:
+#        result += draw_line([p_list[-1], p_list[0]], algorithm)
     return result
 
 
@@ -174,6 +166,7 @@ def rotate(p_list, x, y, r):                    #
         p[:] = [p[0] - x, p[1] - y]
         p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
         p[:] = [p[0] + x, p[1] + y]
+    print(p_list)
     pass
 
 
