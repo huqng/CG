@@ -22,6 +22,8 @@ def draw_line(p_list, algorithm):               ##
     result = [[Round(x0), Round(y0)]]
     if algorithm == 'Naive':
         if x0 == x1:
+            if y0 > y1:
+                x0, y0, x1, y1 = x1, y1, x0, y0
             for y in range(int(y0), int(y1 + 1)):
                 result.append((Round(x0), Round(y)))
             return result
@@ -34,9 +36,9 @@ def draw_line(p_list, algorithm):               ##
             result.append((Round(px), Round(py)))
         
         if abs(k) > 1:
-            if y0 > y1:
+            if y0 > y1:     # y0 won't = y1, otherwise k = 0
                 x0, y0, x1, y1 = x1, y1, x0, y0
-            k = (x1 - x0) / (y1 - y0)
+            k = (x1 - x0) / (y1 - y0)       
             for y in range(int(y0), int(y1 + 1)):
                 py = y
                 px = x0 + k * (y - y0)
@@ -110,7 +112,7 @@ def draw_curve(p_list, algorithm):              ##
     pass
 
 
-def translate(p_list, dx, dy):                  ###
+def translate(p_list, dx, dy):                  #
     """平移变换
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -124,7 +126,7 @@ def translate(p_list, dx, dy):                  ###
     pass
 
 
-def rotate(p_list, x, y, r):                    ###
+def rotate(p_list, x, y, r):                    #
     """旋转变换（除椭圆外）
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数
@@ -133,7 +135,7 @@ def rotate(p_list, x, y, r):                    ###
     :param r: (int) 顺时针旋转角度（°）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 变换后的图元参数
     """
-    print(x,y,r)
+    print("Rotate at", x, y, "| degree =", r)
     r = math.radians(r)
     m = [[math.cos(r), -math.sin(r)], [math.sin(r), math.cos(r)]]
     for p in p_list:
@@ -143,7 +145,7 @@ def rotate(p_list, x, y, r):                    ###
     pass
 
 
-def scale(p_list, x, y, s):                     ###
+def scale(p_list, x, y, s):                     #
     """缩放变换
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 图元参数

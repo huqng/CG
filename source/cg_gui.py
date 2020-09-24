@@ -57,14 +57,14 @@ class MyCanvas(QGraphicsView):
 
     def start_translate(self):
         self.status = 'translate'
-        pass
+
     def start_rotate(self):
         self.status = 'rotate'
-        pass
+        
     def start_scale(self):
         self.status = 'scale'
+
     def finish_draw(self):
-        print(self.temp_id + " FINISHED")
         self.temp_id = self.main_window.get_id()
         self.updateScene([self.sceneRect()])
 
@@ -352,8 +352,10 @@ class MainWindow(QMainWindow):
         _id = str(self.item_cnt)
         self.item_cnt += 1
         return _id
+        
+    # SLOTS
 
-    def line_naive_action(self):                # SLOT
+    def line_naive_action(self):            
         if self.item_cnt != 0:
             self.item_cnt -= 1  # 为了补偿draw finish中的增量
         id = self.get_id()
@@ -362,7 +364,7 @@ class MainWindow(QMainWindow):
         self.list_widget.clearSelection()
         self.canvas_widget.clear_selection()
 
-    def polygon_naive_action(self):                # SLOT
+    def polygon_naive_action(self):           
         if self.item_cnt != 0:
             self.item_cnt -= 1  # 为了补偿draw finish中的增量
         id = self.get_id()
@@ -386,13 +388,14 @@ class MainWindow(QMainWindow):
         else:
             self.statusBar().showMessage("使用鼠标拖动")
             self.canvas_widget.start_translate()
-        pass
+            
     def rotate_action(self):
         if self.canvas_widget.selected_id == '':
             self.statusBar().showMessage("选择需要旋转的Item！")
         else:
             self.statusBar().showMessage("使用鼠标滚轮和Ctrl")
             self.canvas_widget.start_rotate()
+            
     def scale_action(self):
         if self.canvas_widget.selected_id == '':
             self.statusBar().showMessage("选择需要scale的Item！")

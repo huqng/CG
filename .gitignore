@@ -2,3 +2,5 @@
 input.txt
 source/__pycache__/
 imgs/
+*.bmp
+.gitignore

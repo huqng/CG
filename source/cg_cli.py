@@ -60,14 +60,11 @@ if __name__ == '__main__':
                 item_dict[item_id] = ['line', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawPolygon':  #
                 item_id = line[1]
-                line = line[2:]
-                i = 0
+                algorithm = line[-1]
+                line = line[2:-1]
                 xy_list = []
-                while(line[i].isdigit()):
-                    if i % 2 == 0:
-                        xy_list.append([int(line[i]), int(line[i + 1])])
-                    i = i + 1
-                algorithm = line[i]
+                for i in range(0, int(len(line) / 2)):
+                    xy_list.append([int(line[2 * i]), int(line[2 * i + 1])])
                 item_dict[item_id] = ['polygon', xy_list, algorithm, np.array(pen_color)]
             elif line[0] == 'drawEllipse':  #
                 item_id = line[1]
@@ -78,12 +75,18 @@ if __name__ == '__main__':
                 algorithm = ""  #???
                 item_dict[item_id] = ['ellipse', [[x0, y0], [x1, y1]], algorithm, np.array(pen_color)]
             elif line[0] == 'drawCurve':    ##
-                pass
+                item_id = line[1]
+                algorithm = line[-1]
+                line = line[2:-1]
+                xy_list = []
+                for i in range(0, int(len(line) / 2)):
+                    xy_list.append([int(line[2 * i]), int(line[2 * i + 1])])
+                item_dict[item_id] = ['curve', xy_list, algorithm, np.array(pen_color)]
             elif line[0] == 'translate':    # 
                 id = line[1]
                 dx = int(line[2])
                 dy = int(line[3])
-                alg.translate(item_dict[id][1])
+                alg.translate(item_dict[id][1], dx, dy)
             elif line[0] == 'rotate':       # 
                 id = line[1]
                 x = int(line[2])
