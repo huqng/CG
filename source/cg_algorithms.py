@@ -25,9 +25,9 @@ def draw_line(p_list, algorithm):               ##
     :param algorithm: (string) 绘制使用的算法，包括'DDA'和'Bresenham'，此处的'Naive'仅作为示例，测试时不会出现
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
+    x0, y0 = p_list[0]                          # Float in p_list
+    x1, y1 = p_list[1]
     if algorithm == 'Naive':
-        x0, y0 = p_list[0]                          # Float in p_list
-        x1, y1 = p_list[1]
         result = [(Round(x0), Round(y0)), (Round(x1), Round(y1))]
         if x1 == x0 and y1 == y0:
             return result
@@ -46,8 +46,27 @@ def draw_line(p_list, algorithm):               ##
                 x = x0 + k * (y - y0)
                 result.append((Round(x), Round(y)))
         return result
-        
     elif algorithm == 'DDA':
+        result = []
+        dx = Round(x1 - x0)
+        dy = Round(y1 - y0)
+        if abs(dy) > abs(dx):
+            epsilon = abs(dy)
+        else:
+            epsilon = abs(dx)
+        if epsilon != 0:
+            xinc = dx / epsilon             # 1 or dx / dy
+            yinc = dy / epsilon
+        else:
+            xinc = 0
+            yinc = 0
+        x = x0
+        y = y0
+        for i in range(epsilon + 1):
+            result.append((Round(x), Round(y)))
+            x += xinc
+            y += yinc
+        return result
         pass
     elif algorithm == 'Bresenham':
         pass

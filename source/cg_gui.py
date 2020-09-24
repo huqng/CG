@@ -78,6 +78,8 @@ class MyCanvas(QGraphicsView):
         if self.selected_id != '':
             self.item_dict[self.selected_id].selected = False
             self.item_dict[self.selected_id].update()
+        if selected == '':
+            return
         self.selected_id = selected
         self.item_dict[selected].selected = True
         self.item_dict[selected].update()
@@ -248,7 +250,7 @@ class MyItem(QGraphicsItem):
             y = min(y0, y1)
             w = max(x0, x1) - x
             h = max(y0, y1) - y
-            return QRectF(x - 1, y - 1, w + 2, h + 2)
+            return QRectF(int(x - 1), int(y - 1), int(w + 2), int(h + 2))
         elif self.item_type == 'polygon':
             xmin = 0xFFFF
             ymin = 0xFFFF
@@ -330,7 +332,11 @@ class MainWindow(QMainWindow):
         exit_act.triggered.connect(qApp.quit)                                   # EXIT - QUIT
         reset_canvas_act.triggered.connect(self.reset_canvas_action)
         line_naive_act.triggered.connect(self.line_naive_action)                # Line - Naive
+        line_dda_act.triggered.connect(self.line_dda_action)                    # Line - DDA
+        line_bresenham_act.triggered.connect(self.line_dda_action)              # Line - B
         polygon_naive_act.triggered.connect(self.polygon_naive_action)          # Polygon - Naive
+        polygon_dda_act.triggered.connect(self.polygon_dda_action)              # Line - DDA
+        polygon_bresenham_act.triggered.connect(self.polygon_dda_action)        # Line - B
         ellipse_act.triggered.connect(self.ellipse_action)                      # Ellipse
         translate_act.triggered.connect(self.translate_action)                  # Translate
         rotate_act.triggered.connect(self.rotate_action)                        # Rotate
@@ -369,6 +375,18 @@ class MainWindow(QMainWindow):
         self.list_widget.clearSelection()
         self.canvas_widget.clear_selection()
 
+    def line_dda_action(self):
+        if self.item_cnt != 0:
+            self.item_cnt -= 1  # 为了补偿draw finish中的增量
+        id = self.get_id()
+        self.canvas_widget.start_draw_line('DDA', id)
+        self.statusBar().showMessage('DDA算法绘制线段')
+        self.list_widget.clearSelection()
+        self.canvas_widget.clear_selection()
+
+    def line_bresenham_action(self):
+        pass
+
     def polygon_naive_action(self):           
         if self.item_cnt != 0:
             self.item_cnt -= 1  # 为了补偿draw finish中的增量
@@ -377,6 +395,19 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage('Naive算法绘制Polygon')
         self.list_widget.clearSelection()
         self.canvas_widget.clear_selection()
+
+    def polygon_dda_action(self):
+        if self.item_cnt != 0:
+            self.item_cnt -= 1  # 为了补偿draw finish中的增量
+        id = self.get_id()
+        self.canvas_widget.start_draw_polygon('DDA', id)
+        self.statusBar().showMessage('DDA算法绘制Polygon')
+        self.list_widget.clearSelection()
+        self.canvas_widget.clear_selection()
+        pass
+
+    def polygon_bresenham_action(self):
+        pass
 
     def ellipse_action(self):
         if self.item_cnt != 0:
