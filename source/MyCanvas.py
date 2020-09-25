@@ -29,7 +29,7 @@ class MyCanvas(QGraphicsView):
         self.polygon_p_list = []
 
     def start_draw_line(self, algorithm, item_id):
-        self.status = 'line'
+        self.status = 'line_0'
         self.temp_algorithm = algorithm
         self.temp_id = item_id
 
@@ -39,8 +39,13 @@ class MyCanvas(QGraphicsView):
         self.temp_id = item_id
 
     def start_draw_ellipse(self, item_id):
-        self.status = 'ellipse'
+        self.status = 'ellipse_0'
         self.temp_algorithm = "Naive"
+        self.temp_id = item_id
+
+    def start_draw_curve(self, algorithm, item_id):
+        self.status = 'curve_0'
+        self.temp_algorithm = algorithm
         self.temp_id = item_id
 
     def start_translate(self):
@@ -53,6 +58,7 @@ class MyCanvas(QGraphicsView):
         self.status = 'scale'
 
     def finish_draw(self):
+        print("f", end='')
         self.temp_id = self.main_window.get_id()
         self.updateScene([self.sceneRect()])
 
@@ -78,19 +84,20 @@ class MyCanvas(QGraphicsView):
         pos = self.mapToScene(event.localPos().toPoint())
         x = int(pos.x())
         y = int(pos.y())
-        if self.status == 'line':
-            self.temp_item = MyItem(self.temp_id, "line", [[x, y], [x, y]], self.temp_algorithm)
-            self.scene().addItem(self.temp_item)
+        if self.status == 'line_0' or self.status == 'line_1':
+            pass
+        elif self.status == 'line_1':
+            pass
         elif self.status == 'polygon_0':
-            self.temp_item = MyItem(self.temp_id, "polygon", [[x, y]], self.temp_algorithm)
-            self.scene().addItem(self.temp_item)
-            self.status = 'polygon_1'
+            pass
         elif self.status == 'polygon_1':
             self.temp_item.p_list.append([x, y])
+        elif self.status == 'ellipse_0' or self.status == 'ellipse_1':
             pass
-        elif self.status == 'ellipse':
-            self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.temp_algorithm)
-            self.scene().addItem(self.temp_item)
+        elif self.status == 'curve_0':
+            pass
+        elif self.status == 'curve_1':
+            self.temp_item.p_list.append([x, y])
         elif self.status == 'translate_0':
             if self.item_dict[self.selected_id].boundingRect().contains(x, y):
                 self.status = 'translate_1'
@@ -98,6 +105,8 @@ class MyCanvas(QGraphicsView):
                 self.y0 = y
             else:
                 pass
+        elif self.status == 'rotate' or self.status == 'scale':
+            pass
 
         self.updateScene([self.sceneRect()])
         super().mousePressEvent(event)
@@ -106,17 +115,38 @@ class MyCanvas(QGraphicsView):
         pos = self.mapToScene(event.localPos().toPoint())
         x = int(pos.x())
         y = int(pos.y())
-        if self.status == 'line':
+        if self.status == 'line_0': 
+            self.temp_item = MyItem(self.temp_id, "line", [[x, y], [x, y]], self.temp_algorithm)
+            self.scene().addItem(self.temp_item)
+            self.status = 'line_1'
+        elif self.status == 'line_1':
             self.temp_item.p_list[1] = [x, y]
+        elif self.status == 'polygon_0':
+            self.temp_item = MyItem(self.temp_id, "polygon", [[x, y], [x, y]], self.temp_algorithm)
+            self.scene().addItem(self.temp_item)
+            self.status = 'polygon_1'
         elif self.status == 'polygon_1':
-            num = len(self.temp_item.p_list)
-            self.temp_item.p_list[num - 1] = [x, y]
-        elif self.status == 'ellipse':
+            self.temp_item.p_list[-1] = [x, y]
+        elif self.status == 'ellipse_0':
+            self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.temp_algorithm)
+            self.scene().addItem(self.temp_item)
+            self.status = 'ellipse_1'
+        elif self.status == 'ellipse_1':
             self.temp_item.p_list[1] = [x, y]
+        elif self.status == 'curve_0':
+            self.temp_item = MyItem(self.temp_id, "curve", [[x, y], [x, y]], self.temp_algorithm)
+            self.scene().addItem(self.temp_item)
+            self.status = 'curve_1'
+        elif self.status == 'curve_1':
+            self.temp_item.p_list[-1] = [x, y]
+        elif self.status == 'translate_0':
+            pass
         elif self.status == 'translate_1':
             self.item_dict[self.selected_id].translate(x - self.x0, y - self.y0)
             self.x0 = x
             self.y0 = y
+        elif self.status == 'rotate' or self.status == 'scale':
+            pass
 
         self.updateScene([self.sceneRect()])
         super().mouseMoveEvent(event)
@@ -125,26 +155,40 @@ class MyCanvas(QGraphicsView):
         pos = self.mapToScene(event.localPos().toPoint())
         x = int(pos.x())
         y = int(pos.y())
-        if self.status == 'line':
+        # normally 4 steps:
+        # add to dict
+        # add to list
+        # reset status
+        # call finishdraw
+        if self.status == 'line_1':
             self.item_dict[self.temp_id] = self.temp_item
             self.list_widget.addItem(self.temp_id)
+            self.status = 'line_0'
             self.finish_draw()
         elif self.status == 'polygon_1':
             num = len(self.temp_item.p_list)
-            if (num > 2) and math.hypot(self.temp_item.p_list[0][0] - self.temp_item.p_list[num - 1][0], self.temp_item.p_list[0][1] - self.temp_item.p_list[num - 1][1]) < 10:
-                self.temp_item.p_list[num - 1][:] = self.temp_item.p_list[0][:]
+            p_list = self.temp_item.p_list
+            if (num > 2) and math.hypot(p_list[0][0] - p_list[num - 1][0], p_list[0][1] - p_list[num - 1][1]) < 10:
+                self.temp_item.p_list[num - 1][:] = self.temp_item.p_list[0][:] # add line <p[0], p[n - 1]>
                 self.item_dict[self.temp_id] = self.temp_item
                 self.list_widget.addItem(self.temp_id)
                 self.status = 'polygon_0'
                 self.finish_draw()
             else:
                 pass
-        elif self.status == 'ellipse':
+        elif self.status == 'ellipse_1':
             self.item_dict[self.temp_id] = self.temp_item
             self.list_widget.addItem(self.temp_id)
+            self.status = 'ellipse_0'
             self.finish_draw()
         elif self.status == 'translate_1':
             self.status = 'translate_0'
+        elif self.status == 'curve_1':
+        #    self.item_dict[self.temp_id] = self.temp_item
+        #    self.list_widget.addItem(self.temp_id)
+        #    self.status = 'curve_0'
+        #    self.finish_draw()
+            pass
 
         self.updateScene([self.sceneRect()])
         super().mouseReleaseEvent(event)

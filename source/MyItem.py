@@ -30,6 +30,7 @@ class MyItem(QGraphicsItem):
         self.selected = False
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: Optional[QWidget] = ...) -> None:
+        print("d")
         if self.item_type == 'line':
             item_pixels = alg.draw_line(self.p_list, self.algorithm)
             for p in item_pixels:
@@ -44,7 +45,6 @@ class MyItem(QGraphicsItem):
             if self.selected:
                 painter.setPen(QColor(255, 0, 0))
                 painter.drawRect(self.boundingRect())
-            pass
         elif self.item_type == 'ellipse':
             item_pixels = alg.draw_ellipse(self.p_list)
             for p in item_pixels:
@@ -52,9 +52,13 @@ class MyItem(QGraphicsItem):
             if self.selected:
                 painter.setPen(QColor(255, 0, 0))
                 painter.drawRect(self.boundingRect())
-            pass
         elif self.item_type == 'curve':
-            pass
+            item_pixels = alg.draw_curve(self.p_list, self.algorithm)
+            for p in item_pixels:
+                painter.drawPoint(*p)
+            if self.selected:
+                painter.setPen(QColor(255, 0, 0))
+                painter.drawRect(self.boundingRect())
 
     def boundingRect(self) -> QRectF:
         if self.item_type == 'line':
@@ -91,6 +95,7 @@ class MyItem(QGraphicsItem):
             h = max(y0, y1) - y
             return QRectF(x - 1, y - 1, w + 2, h + 2)
         elif self.item_type == 'curve':
+            return QRectF(0, 0, 600, 500)
             pass
 
     def translate(self, dx, dy):

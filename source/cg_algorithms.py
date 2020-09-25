@@ -6,11 +6,13 @@ import math
 
 def Round(f):
     return int(f + 0.5)
+
 def fraction(n):
     if n <= 1:
         return 1
     else:
         return n * fraction(n - 1)
+
 def Combinational(n:int, m:int):
     ret = 1
     for i in range(m):
@@ -112,7 +114,6 @@ def draw_line(p_list, algorithm):               ##
         pass
     return result
 
-
 def draw_polygon(p_list, algorithm):            ##
     """绘制多边形
 
@@ -127,7 +128,6 @@ def draw_polygon(p_list, algorithm):            ##
     #if len(p_list) > 2:
     #result += draw_line([p_list[-1], p_list[0]], algorithm)
     return result
-
 
 def draw_ellipse(p_list):                       #
     """绘制椭圆（采用中点圆生成算法）
@@ -165,7 +165,6 @@ def draw_ellipse(p_list):                       #
  
     return result
 
-
 def draw_curve(p_list, algorithm):              ##
     """绘制曲线
 
@@ -174,7 +173,7 @@ def draw_curve(p_list, algorithm):              ##
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
     print(p_list, end = '')
-    result = []
+    result = [(Round(p_list[0][0]), Round(p_list[0][1]))]
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
     if algorithm == "Bezier":
@@ -208,7 +207,6 @@ def translate(p_list, dx, dy):                  #
         p[1] += dy
     pass
 
-
 def rotate(p_list, x, y, r):                    #
     """旋转变换（除椭圆外）
 
@@ -227,7 +225,6 @@ def rotate(p_list, x, y, r):                    #
         p[:] = [p[0] + x, p[1] + y]
     pass
 
-
 def scale(p_list, x, y, s):                     #
     """缩放变换
 
@@ -241,8 +238,7 @@ def scale(p_list, x, y, s):                     #
         p[0] = (p[0] - x) * s + x
         p[1] = (p[1] - y) * s + y
     pass
-
-                                                
+                                             
 def clip(p_list, x_min, y_min, x_max, y_max, algorithm):    ##
     """线段裁剪
 

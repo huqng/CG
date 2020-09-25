@@ -188,7 +188,13 @@ class MainWindow(QMainWindow):
         self.canvas_widget.clear_selection()
 
     def curve_bezier_action(self):
-        pass
+        if self.item_cnt != 0:
+            self.item_cnt -= 1  # 为了补偿draw finish中的增量
+        id = self.get_id()
+        self.canvas_widget.start_draw_curve('Bezier', id)
+        self.statusBar().showMessage('绘制Bezier Curve')
+        self.list_widget.clearSelection()
+        self.canvas_widget.clear_selection()
 
     def curve_b_spline_action(self):
         pass
