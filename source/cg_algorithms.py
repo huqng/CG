@@ -20,7 +20,7 @@ def Combinational(n:int, m:int):
     ret /= fraction(m)
     return ret
 
-def draw_line(p_list, algorithm):               ##
+def draw_line(p_list, algorithm):               #
     """绘制线段
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 线段的起点和终点坐标
@@ -114,7 +114,7 @@ def draw_line(p_list, algorithm):               ##
         pass
     return result
 
-def draw_polygon(p_list, algorithm):            ##
+def draw_polygon(p_list, algorithm):            #
     """绘制多边形
 
     :param p_list: (list of list of int: [[x0, y0], [x1, y1], [x2, y2], ...]) 多边形的顶点坐标列表
@@ -172,20 +172,18 @@ def draw_curve(p_list, algorithm):              ##
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    print(p_list, end = '')
     result = [(Round(p_list[0][0]), Round(p_list[0][1]))]
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
     if algorithm == "Bezier":
-        print("Bezier Curve")
-        N = 2000
+        N = 1000
         for i in range(1, N):
             t = i / N
             x_i = 0
             y_i = 0
             e = len(p_list) 
             for j in range(e):
-                x_i += p_list[j][0] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
+                x_i += p_list[j][0] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)   
                 y_i += p_list[j][1] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
             result.append((Round(x_i), Round(y_i)))
     elif algorithm == "B-spline":
