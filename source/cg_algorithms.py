@@ -69,7 +69,6 @@ def draw_line(p_list, algorithm):               ##
         return result
         pass
     elif algorithm == 'Bresenham':
-        print(p_list)
         swap_x = False
         swap_y = False
         swap_xy = False
@@ -147,7 +146,7 @@ def draw_ellipse(p_list):                       #
     y2 = abs(y1 + y0) / 2
     x = 0
     y = b
-    while x <= a and abs(b * b * x) <= abs(a * a * y) + 1:
+    while x <= a and abs(b * b * x) <= abs(a * a * y):
         result.append((Round(x2 + x), Round(y2 + y)))
         result.append((Round(x2 + x), Round(y2 - y)))
         result.append((Round(x2 - x), Round(y2 + y)))
@@ -156,7 +155,7 @@ def draw_ellipse(p_list):                       #
         y = math.sqrt(abs(b * b * (1 - x * x / a / a)))
     x = a
     y = 0
-    while y <= b and abs(b * b * x) >= abs(a * a * y) - 1:
+    while y <= b and abs(b * b * x) >= abs(a * a * y):
         result.append((Round(x2 + x), Round(y2 + y)))
         result.append((Round(x2 + x), Round(y2 - y)))
         result.append((Round(x2 - x), Round(y2 + y)))
@@ -164,28 +163,6 @@ def draw_ellipse(p_list):                       #
         y = y + 1
         x = math.sqrt(abs(a * a * (1 - y * y / b / b)))
  
-    return result
-    x2 = (x0 + x1) / 2
-    y2 = (y0 + y1) / 2
-    k = abs((y1 - y0) / (x1 - x0))
-    r = abs(int(x2 - x0))
-    if x0 > x1:
-        x0, y0, x1, y1 = x1, y1, x0, y0
-    for x in range(-r, r + 1):
-        y = math.sqrt(r * r - x * x)
-        y = y * k
-        result.append((Round(x + x2), Round(y2 + y)))
-        result.append((Round(x + x2), Round(y2 - y)))
-    
-    k = abs((x1 - x0) / (y1 - y0))
-    r = abs(int(y2 - y0))
-    if y0 > y1:
-        x0, y0, x1, y1 = x1, y1, x0, y0
-    for y in range(-r, r + 1):
-        x = math.sqrt(r * r - y * y)
-        x = x * k
-        result.append((Round(x2 + x), Round(y2 + y)))
-        result.append((Round(x2 - x), Round(y2 + y)))
     return result
 
 
@@ -248,7 +225,6 @@ def rotate(p_list, x, y, r):                    #
         p[:] = [p[0] - x, p[1] - y]
         p[:] = [p[0] * m[0][0] + p[1] * m[0][1], p[0] * m[1][0] + p[1] * m[1][1]]
         p[:] = [p[0] + x, p[1] + y]
-    print(p_list)
     pass
 
 
