@@ -4,8 +4,8 @@
 # 本文件只允许依赖math库
 import math
 
-def Round(f):
-    return int(f + 0.5)
+def Round(x):
+    return int(x + 0.5)
 
 def fraction(n):
     if n <= 1:
@@ -30,42 +30,39 @@ def draw_line(p_list, algorithm):               #
     x0, y0 = p_list[0]                          # Float in p_list
     x1, y1 = p_list[1]
     if algorithm == 'Naive':
-        result = [(Round(x0), Round(y0)), (Round(x1), Round(y1))]
+        result = [[Round(x0), Round(y0)], [Round(x1), Round(y1)]]
         if x1 == x0 and y1 == y0:
             return result
         if abs(x1 - x0) >= abs(y1 - y0):
             if x0 > x1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
             k = (y1- y0) / (x1 - x0)                # x1 - x0 won't be 0
-            for x in range(int(x0), int(x1 + 1)):
+            for x in range(Round(x0), Round(x1 + 1)):
                 y = y0 + k * (x - x0)
-                result.append((Round(x), Round(y)))
+                result.append([Round(x), Round(y)])
         else:
             if y0 > y1:
                 x0, y0, x1, y1 = x1, y1, x0, y0
             k = (x1 - x0) / (y1 - y0)
-            for y in range(int(y0), int(y1 + 1)):
+            for y in range(Round(y0), Round(y1 + 1)):
                 x = x0 + k * (y - y0)
-                result.append((Round(x), Round(y)))
+                result.append([Round(x), Round(y)])
         return result
     elif algorithm == 'DDA':
         result = []
-        dx = Round(x1 - x0)
-        dy = Round(y1 - y0)
-        if abs(dy) > abs(dx):
-            epsilon = abs(dy)
-        else:
-            epsilon = abs(dx)
-        if epsilon != 0:
-            xinc = dx / epsilon             # 1 or dx / dy
-            yinc = dy / epsilon
+        dx = x1 - x0
+        dy = y1 - y0
+        r = Round(max(abs(dx), abs(dy)))
+        if r != 0:
+            xinc = dx / r
+            yinc = dy / r
         else:
             xinc = 0
             yinc = 0
         x = x0
         y = y0
-        for i in range(epsilon + 1):
-            result.append((Round(x), Round(y)))
+        for i in range(r + 1):
+            result.append([Round(x), Round(y)])
             x += xinc
             y += yinc
         return result
@@ -89,9 +86,9 @@ def draw_line(p_list, algorithm):               #
         result = []
         dx = Round(x1 - x0)
         dy = Round(y1 - y0)
-        d = dy - (dx - dy)
         x = Round(x0)
         y = Round(y0)
+        d = dy - (dx - dy)
         while x <= x1:
             if d < 0:
                 d += 2 * dy
@@ -106,7 +103,7 @@ def draw_line(p_list, algorithm):               #
                 result_y = (y0 + y1) - result_y
             if swap_xy:
                 result_x, result_y = result_y, result_x
-            result.append((result_x, result_y))
+            result.append([result_x, result_y])
             x = x + 1
         return result
 
@@ -135,7 +132,6 @@ def draw_ellipse(p_list):                       #
     :param p_list: (list of list of int: [[x0, y0], [x1, y1]]) 椭圆的矩形包围框左上角和右下角顶点坐标
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    result = []
     x0, y0 = p_list[0]
     x1, y1 = p_list[1]
     if x0 == x1 or y0 == y1:
@@ -144,25 +140,34 @@ def draw_ellipse(p_list):                       #
     b = abs(y1 - y0) / 2
     x2 = abs(x1 + x0) / 2
     y2 = abs(y1 + y0) / 2
+    result = [[Round(x2), Round(y2 + b)], [Round(x2), Round(y2 - b)]]
+
+    p = b * b + a * a * (1 / 4 - b)
     x = 0
     y = b
     while x <= a and abs(b * b * x) <= abs(a * a * y):
-        result.append((Round(x2 + x), Round(y2 + y)))
-        result.append((Round(x2 + x), Round(y2 - y)))
-        result.append((Round(x2 - x), Round(y2 + y)))
-        result.append((Round(x2 - x), Round(y2 - y)))
+        if p < 0:
+            p += b * b * (2 * x + 3) 
+        else:
+            y = y - 1
+            p += b * b * (2 * x + 3) - 2 * a * a * y
         x = x + 1
-        y = math.sqrt(abs(b * b * (1 - x * x / a / a)))
-    x = a
-    y = 0
-    while y <= b and abs(b * b * x) >= abs(a * a * y):
-        result.append((Round(x2 + x), Round(y2 + y)))
-        result.append((Round(x2 + x), Round(y2 - y)))
-        result.append((Round(x2 - x), Round(y2 + y)))
-        result.append((Round(x2 - x), Round(y2 - y)))
-        y = y + 1
-        x = math.sqrt(abs(a * a * (1 - y * y / b / b)))
- 
+        result.append([Round(x2 + x), Round(y2 + y)])
+        result.append([Round(x2 + x), Round(y2 - y)])
+        result.append([Round(x2 - x), Round(y2 + y)])
+        result.append([Round(x2 - x), Round(y2 - y)])
+    p = b * b * (x + 1 / 2) * (x + 1 / 2) + a * a * (y - 1) * (y - 1) - a * a * b * b
+    while y >= 0:
+        if p < 0:
+            x = x + 1
+            p += b * b * (2 * x) - a * a * (2 * y - 3)
+        else:
+            p += (-a * a * (2 * y - 3))
+        y = y - 1
+        result.append([Round(x2 + x), Round(y2 + y)])
+        result.append([Round(x2 + x), Round(y2 - y)])
+        result.append([Round(x2 - x), Round(y2 + y)])
+        result.append([Round(x2 - x), Round(y2 - y)])
     return result
 
 def draw_curve(p_list, algorithm):              ##
@@ -172,7 +177,7 @@ def draw_curve(p_list, algorithm):              ##
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    result = [(Round(p_list[0][0]), Round(p_list[0][1]))]
+    result = [[int(p_list[0][0]), int(p_list[0][1])]]
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
     if algorithm == "Bezier":
@@ -185,7 +190,7 @@ def draw_curve(p_list, algorithm):              ##
             for j in range(e):
                 x_i += p_list[j][0] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)   
                 y_i += p_list[j][1] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
-            result.append((Round(x_i), Round(y_i)))
+            result.append([int(x_i), int(y_i)])
     elif algorithm == "B-spline":
         pass
     else:

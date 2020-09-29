@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         # 设置菜单栏
         menubar = self.menuBar()
         file_menu = menubar.addMenu('文件')
-        set_pen_act = file_menu.addAction('设置画笔')
+        set_pen_act = file_menu.addAction('设置画笔(TODO)')
         reset_canvas_act = file_menu.addAction('重置画布')
         exit_act = file_menu.addAction('退出')
         test_act = file_menu.addAction('test')
@@ -48,14 +48,14 @@ class MainWindow(QMainWindow):
         ellipse_act = draw_menu.addAction('椭圆')
         curve_menu = draw_menu.addMenu('曲线')
         curve_bezier_act = curve_menu.addAction('Bezier')
-        curve_b_spline_act = curve_menu.addAction('B-spline')
+        curve_b_spline_act = curve_menu.addAction('B-spline(TODO)')
         edit_menu = menubar.addMenu('编辑')
         translate_act = edit_menu.addAction('平移')
         rotate_act = edit_menu.addAction('旋转')
         scale_act = edit_menu.addAction('缩放')
         clip_menu = edit_menu.addMenu('裁剪')
-        clip_cohen_sutherland_act = clip_menu.addAction('Cohen-Sutherland')
-        clip_liang_barsky_act = clip_menu.addAction('Liang-Barsky')
+        clip_cohen_sutherland_act = clip_menu.addAction('Cohen-Sutherland(TODO)')
+        clip_liang_barsky_act = clip_menu.addAction('Liang-Barsky(TODO)')
 
         # 连接信号和槽函数
         reset_canvas_act.triggered.connect(self.reset_canvas_action)                    # File/Reset
@@ -116,7 +116,7 @@ class MainWindow(QMainWindow):
     def set_pen_action(self):
         pass
 
-    def test_action(self):
+    def test_action(self): # do nothing else
         nmb = QMessageBox()
         nmb.warning(self, "________Warning________", "TODO")
         pass
