@@ -20,11 +20,11 @@ class MainWindow(QMainWindow):
 
         # 使用QListWidget来记录已有的图元，并用于选择图元。注：这是图元选择的简单实现方法，更好的实现是在画布中直接用鼠标选择图元
         self.list_widget = QListWidget(self)
-        self.list_widget.setMinimumWidth(200)
+        self.list_widget.setMinimumWidth(100)
 
         # 使用QGraphicsView作为画布
         self.scene = QGraphicsScene(self)
-        self.scene.setSceneRect(0, 0, 590, 590)
+        self.scene.setSceneRect(0, 0, 598, 598)
         self.canvas_widget = MyCanvas(self.scene, self)
         self.canvas_widget.setFixedSize(600, 600)
         self.canvas_widget.main_window = self
@@ -33,7 +33,7 @@ class MainWindow(QMainWindow):
         # 设置菜单栏
         menubar = self.menuBar()
         file_menu = menubar.addMenu('文件')
-        set_pen_act = file_menu.addAction('设置画笔(TODO)')
+        set_pen_act = file_menu.addAction('设置画笔')
         reset_canvas_act = file_menu.addAction('重置画布')
         exit_act = file_menu.addAction('退出')
         test_act = file_menu.addAction('test')
@@ -110,6 +110,7 @@ class MainWindow(QMainWindow):
         self.canvas_widget.status = ''
         self.canvas_widget.clear_selection()
         self.canvas_widget.item_dict.clear()
+        self.canvas_widget.set_pencolor(QColor(0, 0, 0))
 
     def exit_action(self):
         qApp.quit()

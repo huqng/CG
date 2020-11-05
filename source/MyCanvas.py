@@ -28,8 +28,10 @@ class MyCanvas(QGraphicsView):
 
         self.polygon_p_list = []
         self.pencolor = QColor(0, 80, 80)
+    
     def get_pencolor(self):
         return self.pencolor
+        
     def set_pencolor(self, color: QColor):
         self.pencolor = color
 

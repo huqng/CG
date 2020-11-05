@@ -1,5 +1,4 @@
 .vscode/
-input.txt
 source/__pycache__/
 imgs/*.bmp
 *.bmp

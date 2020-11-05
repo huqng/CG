@@ -1,0 +1,4 @@
+resetCanvas 500 500
+setColor 0 100 100
+drawCurve c1 100 100 200 100 200 200 300 200 300 100 400 100 400 400 Bezier
+saveCanvas 1

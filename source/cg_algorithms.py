@@ -8,11 +8,11 @@ def Round(x):
     return int(x + 0.5)
 
 def fraction(n):
-    if n <= 1:
-        return 1
-    else:
-        return n * fraction(n - 1)
-
+    result = 1
+    for i in range(n):
+        result *= (i + 1)
+    return result
+    
 def Combinational(n:int, m:int):
     ret = 1
     for i in range(m):
@@ -170,6 +170,26 @@ def draw_ellipse(p_list):                       #
         result.append([Round(x2 - x), Round(y2 - y)])
     return result
 
+def get_Bezier_Point(t: float, p_list):                 # should only used in draw_curve
+    n = len(p_list)
+    x = 0.0
+    y = 0.0
+    for i in range(n):
+        x += p_list[i][0] * pow(t, i) * pow(1 - t, n - 1 - i) * Combinational(n - 1, i)   
+        y += p_list[i][1] * pow(t, i) * pow(1 - t, n - 1 - i) * Combinational(n - 1, i)
+    return [Round(x), Round(y)]
+
+def draw_Bezier(t1: float, t2: float, P1, P2, p_list):  # should only used in draw_curve
+    if math.hypot(P1[0] - P2[0], P1[1] - P2[1]) <= 1:
+        return []
+    else:
+        result = []
+        Pm = get_Bezier_Point((t1 + t2) / 2.0, p_list)
+        result.append(Pm)
+        result += draw_Bezier(t1, (t1 + t2) / 2.0, P1, Pm, p_list)
+        result += draw_Bezier((t1 + t2) / 2.0, t2, Pm, P2, p_list)
+        return result
+
 def draw_curve(p_list, algorithm):              ##
     """绘制曲线
 
@@ -177,20 +197,11 @@ def draw_curve(p_list, algorithm):              ##
     :param algorithm: (string) 绘制使用的算法，包括'Bezier'和'B-spline'（三次均匀B样条曲线，曲线不必经过首末控制点）
     :return: (list of list of int: [[x_0, y_0], [x_1, y_1], [x_2, y_2], ...]) 绘制结果的像素点坐标列表
     """
-    result = [[int(p_list[0][0]), int(p_list[0][1])]]
+    result = [[Round(p_list[0][0]), Round(p_list[0][1])], [Round(p_list[-1][0]), Round(p_list[-1][1])]]
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
     if algorithm == "Bezier":
-        N = 1000
-        for i in range(1, N):
-            t = i / N
-            x_i = 0
-            y_i = 0
-            e = len(p_list) 
-            for j in range(e):
-                x_i += p_list[j][0] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)   
-                y_i += p_list[j][1] * pow(t, j) * pow(1 - t, e - 1 - j) * Combinational(e - 1, j)
-            result.append([int(x_i), int(y_i)])
+        result += draw_Bezier(0.0, 1.0, p_list[0], p_list[-1], p_list)
     elif algorithm == "B-spline":
         pass
     else:
