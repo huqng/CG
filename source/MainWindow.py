@@ -3,7 +3,8 @@ from PyQt5.QtWidgets import (
     QListWidget,
     QHBoxLayout,
     qApp,
-    QMessageBox
+    QMessageBox,
+    QColorDialog
 )
 from MyCanvas import *
 
@@ -23,7 +24,7 @@ class MainWindow(QMainWindow):
 
         # 使用QGraphicsView作为画布
         self.scene = QGraphicsScene(self)
-        self.scene.setSceneRect(0, 0, 600, 600)
+        self.scene.setSceneRect(0, 0, 590, 590)
         self.canvas_widget = MyCanvas(self.scene, self)
         self.canvas_widget.setFixedSize(600, 600)
         self.canvas_widget.main_window = self
@@ -78,7 +79,7 @@ class MainWindow(QMainWindow):
         clip_liang_barsky_act.triggered.connect(self.clip_liang_barsky_action)          # Edit/Clip/Liang-Barsky
 
         self.list_widget.currentTextChanged.connect(self.canvas_widget.selection_changed)
-                                                                                # Selection change
+                                                                                        # Selection change
 
         # 设置主窗口的布局
         self.hbox_layout = QHBoxLayout()
@@ -114,11 +115,12 @@ class MainWindow(QMainWindow):
         qApp.quit()
 
     def set_pen_action(self):
+        self.canvas_widget.set_pencolor(QColorDialog.getColor(self.canvas_widget.get_pencolor(), self))
         pass
 
-    def test_action(self): # do nothing else
+    def test_action(self):      # do nothing
         nmb = QMessageBox()
-        nmb.warning(self, "________Warning________", "TODO")
+        nmb.warning(self, "TEST", "TEST")
         pass
 
     def line_naive_action(self):            

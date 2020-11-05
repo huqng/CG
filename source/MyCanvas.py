@@ -27,6 +27,11 @@ class MyCanvas(QGraphicsView):
         self.temp_item = None
 
         self.polygon_p_list = []
+        self.pencolor = QColor(0, 80, 80)
+    def get_pencolor(self):
+        return self.pencolor
+    def set_pencolor(self, color: QColor):
+        self.pencolor = color
 
     def start_draw_line(self, algorithm, item_id):
         self.status = 'line_0'
@@ -115,6 +120,7 @@ class MyCanvas(QGraphicsView):
                     self.status = 'translate_1'
                     self.x0 = x
                     self.y0 = y
+
                 else:
                     pass
             elif self.status == 'rotate' or self.status == 'scale':
@@ -138,25 +144,25 @@ class MyCanvas(QGraphicsView):
         y = int(pos.y())
         if(event.buttons() == Qt.LeftButton):
             if self.status == 'line_0': 
-                self.temp_item = MyItem(self.temp_id, "line", [[x, y], [x, y]], self.temp_algorithm)
+                self.temp_item = MyItem(self.temp_id, "line", [[x, y], [x, y]], self.pencolor, self.temp_algorithm)
                 self.scene().addItem(self.temp_item)
                 self.status = 'line_1'
             elif self.status == 'line_1':
                 self.temp_item.p_list[1] = [x, y]
             elif self.status == 'polygon_0':
-                self.temp_item = MyItem(self.temp_id, "polygon", [[x, y], [x, y]], self.temp_algorithm)
+                self.temp_item = MyItem(self.temp_id, "polygon", [[x, y], [x, y]], self.pencolor, self.temp_algorithm)
                 self.scene().addItem(self.temp_item)
                 self.status = 'polygon_1'
             elif self.status == 'polygon_1':
                 self.temp_item.p_list[-1] = [x, y]
             elif self.status == 'ellipse_0':
-                self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.temp_algorithm)
+                self.temp_item = MyItem(self.temp_id, "ellipse", [[x, y], [x, y]], self.pencolor, self.temp_algorithm)
                 self.scene().addItem(self.temp_item)
                 self.status = 'ellipse_1'
             elif self.status == 'ellipse_1':
                 self.temp_item.p_list[1] = [x, y]
             elif self.status == 'curve_0':
-                self.temp_item = MyItem(self.temp_id, "curve", [[x, y], [x, y]], self.temp_algorithm)
+                self.temp_item = MyItem(self.temp_id, "curve", [[x, y], [x, y]], self.pencolor, self.temp_algorithm)
                 self.scene().addItem(self.temp_item)
                 self.status = 'curve_1'
             elif self.status == 'curve_1':
