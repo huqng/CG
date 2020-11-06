@@ -198,13 +198,7 @@ class MyCanvas(QGraphicsView):
         elif self.status == 'translate_1':
             self.status = 'translate_0'
         elif self.status == 'curve_1':
-        #    self.item_dict[self.temp_id] = self.temp_item
-        #    self.list_widget.addItem(self.temp_id)
-        #    self.status = 'curve_0'
-        #    self.finish_draw()
-            pass
-
-        self.updateScene([self.sceneRect()])
+            pass    
         super().mouseReleaseEvent(event)
     
     def mouseDoubleClickEvent(self, event: QMouseEvent) ->None:

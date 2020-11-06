@@ -4,20 +4,29 @@
 # 本文件只允许依赖math库
 import math
 
+Combination_cache = [[None for i in range(200)] for j in range(200)]
+Fraction_cache = [None for i in range(200)]
+
 def Round(x):
     return int(x + 0.5)
 
 def fraction(n):
+    if Fraction_cache[n] != None:
+        return Fraction_cache[n]
     result = 1
     for i in range(n):
         result *= (i + 1)
+    Fraction_cache[n] = result
     return result
     
 def Combinational(n:int, m:int):
+    if Combination_cache[n][m] != None:
+        return Combination_cache[n][m]
     ret = 1
     for i in range(m):
         ret *= (n - i)
     ret /= fraction(m)
+    Combination_cache[n][m] = ret
     return ret
 
 def draw_line(p_list, algorithm):               #
@@ -201,6 +210,7 @@ def draw_curve(p_list, algorithm):              ##
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
     if algorithm == "Bezier": 
+        print("drawing Bezier curve with " + str(len(p_list)) + " P's")
         result += draw_Bezier(0.0, 1.0, p_list[0], p_list[-1], p_list)
     elif algorithm == "B-spline":
         pass
