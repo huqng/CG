@@ -97,9 +97,23 @@ class MyItem(QGraphicsItem):
             w = max(x0, x1) - x
             h = max(y0, y1) - y
             return QRectF(x - 1, y - 1, w + 2, h + 2)
-        elif self.item_type == 'curve':
-            return QRectF(0, 0, 600, 500)
-            pass
+        elif self.item_type == 'curve':     # same as polygon but incorrect
+            xmin = 0xFFFF
+            ymin = 0xFFFF
+            xmax = -0xFFFF
+            ymax = -0xFFFF
+            for p in self.p_list:
+                if xmin > p[0]:
+                    xmin = p[0]
+                if ymin > p[1]:
+                    ymin = p[1]
+                if xmax < p[0]:
+                    xmax = p[0]
+                if ymax < p[1]:
+                    ymax = p[1]
+            w = xmax - xmin
+            h = ymax - ymin
+            return QRectF(xmin - 1, ymin - 1, w + 2, h + 2)
 
     def translate(self, dx, dy):
         alg.translate(self.p_list, dx, dy)

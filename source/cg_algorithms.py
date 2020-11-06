@@ -180,7 +180,7 @@ def get_Bezier_Point(t: float, p_list):                 # should only used in dr
     return [Round(x), Round(y)]
 
 def draw_Bezier(t1: float, t2: float, P1, P2, p_list):  # should only used in draw_curve
-    if math.hypot(P1[0] - P2[0], P1[1] - P2[1]) <= 1:
+    if math.hypot(P1[0] - P2[0], P1[1] - P2[1]) < 2:    # To make curve continuous
         return []
     else:
         result = []
@@ -200,7 +200,7 @@ def draw_curve(p_list, algorithm):              ##
     result = [[Round(p_list[0][0]), Round(p_list[0][1])], [Round(p_list[-1][0]), Round(p_list[-1][1])]]
     if algorithm == 'Naive':        # 
         return draw_polygon(p_list, 'Naive')
-    if algorithm == "Bezier":
+    if algorithm == "Bezier": 
         result += draw_Bezier(0.0, 1.0, p_list[0], p_list[-1], p_list)
     elif algorithm == "B-spline":
         pass
